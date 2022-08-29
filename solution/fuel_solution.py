@@ -42,12 +42,16 @@ def solution(fuel):
         return [1, 1]
 
     #puts fuel matrix into standard form with probabilities
-    std_fuel = standardize_fuel(fuel)
-    print(std_fuel)
+    prob_fuel = probabilize_fuel(fuel)
+    print(sum(prob_fuel[0]))
+
+    #re_fuel = reorder_fuel(prob_fuel)
     assert False
 
     #uses matrix exponentiation to calculate limit as elements go to infinity
-    exp_fuel = get_solution_matrix(std_fuel)
+    exp_fuel = get_solution_matrix(prob_fuel)
+    print(exp_fuel)
+    assert False
     #print(exp_fuel)
 
     #formats into a single line answer
@@ -57,7 +61,7 @@ def solution(fuel):
 '''
 OLD STD FUEL
 
-def standardize_fuel(fuel):
+def probabilize_fuel(fuel):
     """Turns an input 2D array into a more explicit absorb markov chain format.
 
     Each non zero element is converted from an integer to a probability, [0,1],
@@ -84,20 +88,23 @@ def standardize_fuel(fuel):
 
     return std_fuel
 '''
-def standardize_fuel(fuel):
+def probabilize_fuel(fuel):
+    max_32bit_int = 2147483647
     std_fuel = []
     for i in range(len(fuel)):
         row_i = fuel[i]
         row_i_sum = sum(row_i)
         if sum(row_i):
-            new_row_i = [Fraction(elem,row_i_sum) for elem in row_i]
-            std_fuel.append(new_row_i)
+            new_row_i = [Fraction(elem,row_i_sum).limit_denominator(max_32bit_int) for elem in row_i]
         else:
             row_i[i] = 1
-            std_fuel.append(row_i)
+            new_row_i = [Fraction(elem,1).limit_denominator(max_32bit_int) for elem in row_i]
+        std_fuel.append(new_row_i)
+    
 
     return std_fuel
 
+#def reorder_fuel(prob_fuel):
 
 
 
