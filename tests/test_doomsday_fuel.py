@@ -1,10 +1,9 @@
 import sys
 
-from solution.fuel_solution import areMatricesEqual
-
 sys.path.insert(0, '/home/ajcollins/Documents/google-foobar/doomsday-fuel/solution')
 
 from fuel_solution import *
+from fuel_numpy import solution_fuel
 
 #Declare global test cases
 TEST_CASES = [
@@ -25,6 +24,22 @@ TEST_CASES = [
 
     ]
 ]
+
+def areMatricesEqual(A,B):
+    #tests if two 2D matrices are equivalent
+
+    #check matrix sizing
+    if len(A) != len(B) or len(A[0]) != len(B[0]):
+        return False
+
+    #check each element is equal
+    matches = 0
+    for row in range(len(A)):
+            for col in range(len(A[0])):
+                if is_equal(A[row][col], B[row][col]):
+                    matches += 1
+
+    return matches == len(A) * len(A[0])
 
 def test_standardize():
     answers = [
@@ -53,14 +68,14 @@ def test_standardize():
     for case in range(len(TEST_CASES)):
 
         #initialize loop variables
-        test = standardizeFuel(TEST_CASES[case])
+        test = standardize_fuel(TEST_CASES[case])
         answer = answers[case]
         matches = 0
 
         #compare each element of the test and the answers
         for row in range(len(test)):
             for col in range(len(test[0])):
-                if isEqual(test[row][col], answer[row][col]):
+                if is_equal(test[row][col], answer[row][col]):
                     matches += 1
         if matches == len(test) * len(test[0]):
             #print(f'Standardize Test #{case} passed!')
@@ -156,9 +171,9 @@ def test_mMultiply():
         assert len(multCases) == len(multAnswers)
         A = multCases[case][0]
         B = multCases[case][1]
-        prod = mMultiply(A,B)
+        prod = matrix_multiply(A,B)
         assert areMatricesEqual(prod, multAnswers[case])
-        #print(f'mMultiply Case #{case} passed test...')
+        #print(f'atrix_m Case #{case} passed test...')
         matches += 1
     return matches == len(multAnswers)
 
@@ -176,10 +191,29 @@ def test_solution():
         for i in range(len(ans)):
             if sol_inp[i] == ans[i]:
                 matches += 1
-
         assert(matches == len(ans))
 
 
+def test_solutions():
+    m = [
+        [0,2,3,0,1],
+        [0,0,0,0,0],
+        [1,0,0,1,0],
+        [0,0,0,0,0],
+        [0,0,0,0,0]
+    ]
+    np = solution_fuel(m)
+    sol = solution(m)
+    disp = f'Comparison: \nnumpy: {np} \nsolution: {sol}'
+    print(disp)
+    return
+    tests = 100
+    for t in range(tests):
+        pass
+        #m = generate_fuel_array()
+    
 
 def test_import():
-    assert(isEqual(1,1))
+    assert(is_equal(1,1))
+
+test_solutions()

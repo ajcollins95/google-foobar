@@ -2,22 +2,23 @@ from fractions import Fraction
 import numpy as np
 from numpy.linalg import matrix_power
 import matplotlib.pyplot as plt
+import math
 #
 #
 #MAKE THIS BEAUTIFUL
 #THIS IS NOT MINE!!! USed fot testing
 #
 #
-def solution(m):
+def solution_fuel(m):
     if len(m) < 2:
         return [1,1]
     r_subm, q_subm = split_martix(m)
     f_subm = calc_f(q_subm)
-    print(r_subm)
-    print(f_subm)
+    #print(r_subm)
+    #print(f_subm)
     fr_subm = np.dot(f_subm, r_subm)
-    return fr_subm
-    #return dec_to_frac_with_lcm(fr_subm[0])
+    #return fr_subm
+    return dec_to_frac_with_lcm(fr_subm[0])
 
 def split_martix(m):
     absorbing = set()
@@ -52,8 +53,7 @@ def dec_to_frac_with_lcm(l):
         denoms.append(frac.denominator)
     lcd = 1
     for denom in denoms:
-        pass
-        #lcd = lcm(lcd,denom)
+        lcd = math.lcm(lcd,denom)
     for num_i in range(len(ret_arr)):
         ret_arr[num_i] *= int(lcd/denoms[num_i])
     ret_arr.append(lcd)
@@ -86,10 +86,9 @@ gamble = [
     [0,0,0,0,0,0]
 ]
 
-#solution(test)
+print(solution_fuel(test))
 
-
-
+'''
 def solver(fuel):
     std_fuel = np.array(standardizeFuel(fuel))
     absorbed = absorbStates(std_fuel)
@@ -170,3 +169,4 @@ def plot(x,y, x_label = "", y_label = ""):
 
 
 solver(test)
+'''
