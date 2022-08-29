@@ -158,13 +158,14 @@ def formatSolution(exp_fuel, og_fuel):
 #UTILS
 ######
 
-def isEqual(x, y, epsilon = float((100 * 2147483647) ** -1)):
+def isEqual(x, y, epsilon: float = 2147483647 ** -1):
     #compares float equality
-    #epsilon is max 32 bit int
 
     return abs(x-y) < epsilon
 
 def areMatricesEqual(A,B):
+    #tests if two 2D matrices are equivalent
+
     #check matrix sizing
     if len(A) != len(B) or len(A[0]) != len(B[0]):
         return False
@@ -179,6 +180,7 @@ def areMatricesEqual(A,B):
     return matches == len(A) * len(A[0])
 
 def mMultiply(A,B):
+    #performs matrix multiplication on two matrices
 
     #get inner dimensions, test that the matrix has correct sizing
     inner_dimens = (len(A[0]), len(B))
