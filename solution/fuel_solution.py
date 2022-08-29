@@ -1,10 +1,42 @@
+"""A solution to the doomsday fuel problem from google foobar.
+
+The given problem can be modeled as an absorbing markov chain, where each empty
+state is absorbing, and any non-empty states can be considered transient. This 
+solution uses matrix exponentiation to approximate the limit of each input 
+element.
+
+Limit (M ** k)
+as k -> inf
+
+where:
+M = input matrix
+k = variable exponent
+
+As k increases, many values will approach zero. At this point, the matrix of
+limits is a matrix of probabilities that each state will be reached over time.
+
+"""
+
+
 from fractions import Fraction
 import math
 
 def solution(fuel):
-    """
-    Adhere to style guide!!!
-    stuff
+    """Solves the doomsday_fuel problem from google foobar.
+
+    Standardizes the input into something that can be exponentiated correctly.
+    Exponentiates the above until the top left corner is appx. zero.
+    Formats result into [prob_i prob_i prob_i denom]
+
+    Args:
+    2D Matrix of state changing probabilities
+
+    Returns:
+    1D Array containing the probabilities that each state will be reached
+    The index of the return value is the probability that state index
+    is reached. Effectively:
+    probability_state_i = return[i]/return[-1]
+    
     """
     if len(fuel) <= 1:
         return [1, 1]
@@ -21,8 +53,19 @@ def solution(fuel):
     return results
 
 def standardizeFuel(fuel):
+    """Turns an input 2D array into a more explicit absorb markov chain format.
+
+    Each non zero element is converted from an integer to a probability, [0,1],
+    that the next state will be traveresed. Absorbing state rows have a 100% (1)
+    probability that they will be reached, and these are added to their rows.
+
+    Args:
+    2D Matrix of state changing probabilities
+
+    Returns:
+    2D array of float probabilities for each state to transition.   
     """
-"""
+
     std_fuel = []
     for i in range(len(fuel)):
         row_i = fuel[i]
@@ -37,6 +80,20 @@ def standardizeFuel(fuel):
 
 
 def getSolutionMatrix(std_fuel):
+    """Turns a formatted fuel array into the exponentiated limit -> infinity.
+
+    Define f(x) = M ** k. As Lim f(x) approaches infinity, the resulting 
+    matrix will be the probabilities that each state will be reached in the
+    long term. We know that the top left values will approach zero, so we stop 
+    exponentiating when the zero values reach a suitable epsilon. This is 
+    the condition for the "limit"
+
+    Args:
+    2D Matrix of formatted state probabilities
+
+    Returns:
+    2D array of float probabilities for each state to transition.   
+    """
     isTopLeftZero = False
     max_32bit_int = 2147483647
     kth_power = 2
