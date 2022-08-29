@@ -12,7 +12,7 @@ def solution(fuel):
     #puts fuel matrix into standard form with probabilities
     std_fuel = standardizeFuel(fuel)
 
-    #uses matrix exponentiaition to calculate limit as each element goes to infinity
+    #uses matrix exponentiation to calculate limit as elements go to infinity
     #returns top row of limit matrix 
     fract_fuel = getSolutionMatrix(std_fuel)
 
@@ -45,9 +45,11 @@ def getSolutionMatrix(std_fuel):
     epsilon = 10 ** -precision
     while(not isTopLeftZero):
         exp_fuel = mMultiply(exp_fuel, std_fuel)
-        isTopLeftZero = isEqual(exp_fuel[0][0],0, epsilon) and isEqual(exp_fuel[1][0],0, epsilon)
+        isTopLeftZero = (isEqual(exp_fuel[0][0],0, epsilon) and
+                         isEqual(exp_fuel[1][0],0, epsilon))
         kth_power += 1
-    fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int) for elem in exp_fuel[0]]
+    fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
+                  for elem in exp_fuel[0]]
   
     return fract_fuel
             
