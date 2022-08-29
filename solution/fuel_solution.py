@@ -45,11 +45,10 @@ def solution(fuel):
     std_fuel = standardizeFuel(fuel)
 
     #uses matrix exponentiation to calculate limit as elements go to infinity
-    #returns top row of limit matrix 
-    fract_fuel = getSolutionMatrix(std_fuel)
+    exp_fuel = getSolutionMatrix(std_fuel)
 
     #formats into a single line answer
-    results = formatSolution(fract_fuel, fuel)
+    results = formatSolution(exp_fuel, fuel)
     return results
 
 def standardizeFuel(fuel):
@@ -94,39 +93,65 @@ def getSolutionMatrix(std_fuel):
     Returns:
     2D array of float probabilities for each state to transition.   
     """
-    isTopLeftZero = False
-    max_32bit_int = 2147483647
+    isTopLeftZero = False #TODO develop better condition for steady-state limit
     kth_power = 2
     exp_fuel = std_fuel
-    precision = 15 #Eventually not a magic number
+    precision = 15 #TODO develop formula for calculating precision
     epsilon = 10 ** -precision
     while(not isTopLeftZero):
         exp_fuel = mMultiply(exp_fuel, std_fuel)
         isTopLeftZero = (isEqual(exp_fuel[0][0],0, epsilon) and
                          isEqual(exp_fuel[1][0],0, epsilon))
         kth_power += 1
+    return exp_fuel
+
     fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
                   for elem in exp_fuel[0]]
   
     return fract_fuel
             
-def formatSolution(sol_fuel, og_fuel):
+def formatSolution(exp_fuel, og_fuel):
+    """Turns an exponetiated input into the final formatted solution
+
+    We only care about the top row of the exponentiated array; this represents
+    the probabilities for state 0 in the original input. We then convert the
+    elements of that row to fractions
+
+    Args:
+        exp_fuel: The exponentiated limit array as per getSolutionMatrix()
+        og_fuel: The original input to solution()
+        
+
+    Returns:
+        Formatted 1D array of integers. The last index is the denominator. The 
+        other elements are numerators that correspond to the probability that
+        the states at those indices will be reached in the long term.
+
+        [0, 3, 2, 9, 14]
+    """
+    max_32bit_int = 2147483647
+
+    #top row describes probabilities when starting at state 0
+    exp_top_row = exp_fuel[0] 
+
+    #convert elements to fractions using max32int as max denominator
+    fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
+                  for elem in exp_top_row]
+
+    #get indices of terminal states in original input
     terminal_states = set()
     for i in range(len(og_fuel)):
         row_i = og_fuel[i]
-        print(sum(row_i))
         if sum(row_i) == 1:
             terminal_states.add(i)
-    denoms = [elem.denominator for elem in sol_fuel]
+
+    #find least common multiple for the fractions in the array
+    denoms = [elem.denominator for elem in fract_fuel]
     lcm = math.lcm(*denoms)
     probs = [lcm]
-    print(len(terminal_states))
     for i in range(len(terminal_states)):
-        print('a')
-        last = (lcm * sol_fuel.pop()).numerator
-        print(last)
+        last = (lcm * fract_fuel.pop()).numerator
         probs.insert(0, last)
-    print(probs)
     return probs
 
 ######
