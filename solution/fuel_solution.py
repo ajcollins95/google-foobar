@@ -36,7 +36,6 @@ def solution(fuel):
     The index of the return value is the probability that state index
     is reached. Effectively:
     probability_state_i = return[i]/return[-1]
-    
     """
     if len(fuel) <= 1:
         return [1, 1]
@@ -69,12 +68,13 @@ def standardizeFuel(fuel):
     for i in range(len(fuel)):
         row_i = fuel[i]
         row_i_sum = sum(row_i)
-        if sum(row_i) == 0:
-            row_i[i] = 1
-            std_fuel.append(row_i)
-        else:
+        if sum(row_i):
             new_row_i = [float(elem)/row_i_sum for elem in row_i]
             std_fuel.append(new_row_i)
+        else:
+            row_i[i] = 1
+            std_fuel.append(row_i)
+
     return std_fuel
 
 
@@ -93,22 +93,17 @@ def getSolutionMatrix(std_fuel):
     Returns:
     2D array of float probabilities for each state to transition.   
     """
-    isTopLeftZero = False #TODO develop better condition for steady-state limit
+    is_top_left_zero = False #TODO develop better condition for steady-state limit
     kth_power = 2
     exp_fuel = std_fuel
     precision = 15 #TODO develop formula for calculating precision
     epsilon = 10 ** -precision
-    while(not isTopLeftZero):
+    while(not is_top_left_zero):
         exp_fuel = mMultiply(exp_fuel, std_fuel)
-        isTopLeftZero = (isEqual(exp_fuel[0][0],0, epsilon) and
+        is_top_left_zero = (isEqual(exp_fuel[0][0],0, epsilon) and
                          isEqual(exp_fuel[1][0],0, epsilon))
         kth_power += 1
     return exp_fuel
-
-    fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
-                  for elem in exp_fuel[0]]
-  
-    return fract_fuel
             
 def formatSolution(exp_fuel, og_fuel):
     """Turns an exponetiated input into the final formatted solution
@@ -160,7 +155,6 @@ def formatSolution(exp_fuel, og_fuel):
 
 def isEqual(x, y, epsilon: float = 2147483647 ** -1):
     #compares float equality
-
     return abs(x-y) < epsilon
 
 def areMatricesEqual(A,B):
