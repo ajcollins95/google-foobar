@@ -239,26 +239,34 @@ def identity_matrix(n):
     return I
 
 def scalar_matrix_mult(M, s):
+    #multiplies matrix by a scalar
     (rows, cols) = (len(M), len(M[0]))
     s_prod = [[s*M[j][i] for i in range(cols)] for j in range(rows)]
     return s_prod
 
-def copy_matrix(M):
-    (rows, cols) = (len(M), len(M[0]))
-    copy = [[M[j][i] for i in range(cols)] for j in range(rows)]
-    return copy
-
 def inverse_matrix(A):
-    #stole this too
+    """Gets the inverse of a matrix A
+
+    Uses matrix algebra to solve for the inverse of matrix A. 
+
+    Reference:
+    http://integratedmlai.com/matrixinverse/
+
+    Args:
+        FR: 2D list pretending to be a matrix
+
+    Returns:
+        Inverse matrix of A
+    """
 
     #test squareness
     assert len(A) == len(A[0])
  
     #Initialize loop variables
     n = len(A)
-    AM = copy_matrix(A)
+    AM = copy.deepcopy(A)
     I = identity_matrix(n)
-    IM = copy_matrix(I)
+    IM = copy.deepcopy(I)
  
     # Section 3: Perform row operations
     indices = list(range(n)) # to allow flexible row referencing ***
