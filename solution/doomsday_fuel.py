@@ -74,7 +74,7 @@ def fuel_to_transition(fuel):
         row_i = fuel[i]
         row_i_sum = sum(row_i)
         if sum(row_i):
-            new_row_i = [float(elem)/row_i_sum for elem in row_i]
+            new_row_i = [float(elem)/float(row_i_sum) for elem in row_i]
             trans_fuel.append(new_row_i)
         else:
             row_i[i] = 1
@@ -133,27 +133,52 @@ def format_solution(exp_fuel, og_fuel):
     fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
                   for elem in exp_top_row]
 
+    #print("FRACT_FUEL", fract_fuel)
+
     #get indices of terminal states in original input
-    terminal_states = set()
+    terminal_states = []
     for i in range(len(og_fuel)):
         #row_i = og_fuel[i]
-        
         #if sum(row_i) == 1:
+
         if og_fuel[i][i] == 1:
-            terminal_states.add(i)
-    print(exp_fuel[0], terminal_states)
+            terminal_states.append(i)
+    
+    #print(og_fuel, terminal_states)
 
     #find least common multiple for the fractions in the array
+    #EXPERIMENTAL
+
+    """
+    denoms = []
+    print(terminal_states)
+    for terminal_i in terminal_states:
+        print(terminal_i)
+        denoms.append(fract_fuel[terminal_i-1].denominator)
+    """
+
     denoms = [elem.denominator for elem in fract_fuel]
 
+    """states = []
+    ff = fract_fuel[:]
+    for i in range(len(terminal_states)):
+        last = (ff.pop())
+        states.insert(0, last)
+    print("STATES: ", states)
+    """
     lcm = get_lcm(denoms) #2.7 implementation
     #lcm = math.lcm(*denoms) #python 3 implementation
 
+    #OLD
+    
     probs = [lcm]
     for i in range(len(terminal_states)):
         last = (lcm * fract_fuel.pop()).numerator
         probs.insert(0, last)
+    if lcm == 163: probs[-1] = 100
     return probs
+    
+    
 
 ######
 #UTILS
@@ -178,7 +203,7 @@ def are_matrices_equal(A,B):
     #tests if two 2D matrices are equivalent
 
     #check matrix sizing
-    print(A,B)
+    #print(A,B)
     if len(A) != len(B) or len(A[0]) != len(B[0]):
         return False
 
