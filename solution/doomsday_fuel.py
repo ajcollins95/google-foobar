@@ -4,12 +4,13 @@ The given problem can be modeled as an absorbing markov chain, where each empty
 state is absorbing, and any non-empty states can be considered transient. This
 solution manipulates a fuel array into a transition matrix in canonical form (as
 per wikipedia definition). Once in this form, matrix Q and R are calculated.
-We solve for FR
+We solve for F = (1-Q) ** -1 and calc FR which is a matrix of probabilities that 
+various states will be reached.
 
 """
 
 from fractions import Fraction, gcd
-import math
+import copy
 
 MAX_32BIT_INT = 2147483647
 
@@ -27,23 +28,27 @@ def solution(fuel):
     is reached. Effectively:
     probability_state_i = return[i]/return[-1]
     """
-    #print("ORIGINAL",fuel)
+    fuel_orig = copy.deepcopy(fuel)
+    #print("FUEL: ",fuel_orig)
     if len(fuel) <= 1:
         return [1, 1]
 
     #puts fuel matrix into a probability transition matrix
     trans_fuel = fuel_to_transition(fuel)
-
+    #print("FUEL: ", fuel_orig)
+    #print("TRANS1: ",trans_fuel)
+    '''
     #print('precheck', trans_fuel[0][0])
     if trans_fuel[0][0] == 1:
         ans = [0]*len(fuel)
         ans[-1] = 1
         return ans
-
-
+    '''
 
     #re_fuel = reorder_fuel(prob_fuel)
     submatrices = extract_submatrices(trans_fuel)
+    #print("TRANS2: ",trans_fuel)
+
     Q = submatrices[0]
     R = submatrices[1]
 
@@ -84,7 +89,7 @@ def fuel_to_transition(fuel):
 
 def extract_submatrices(trans_fuel):
     #Full transparency I did lift this from URL
-    absorb_rows = [i for i in range(len(trans_fuel)) if 1 in trans_fuel[i]]
+    absorb_rows = [i for i in range(len(trans_fuel)) if 1 == trans_fuel[i][i]]
     R = []
     Q = []
     for r in range(len(trans_fuel)):
@@ -175,7 +180,7 @@ def format_solution(exp_fuel, og_fuel):
     for i in range(len(terminal_states)):
         last = (lcm * fract_fuel.pop()).numerator
         probs.insert(0, last)
-    if lcm == 163: probs[-1] = 100
+    #if lcm == 163: probs[-1] = 100
     return probs
     
     
@@ -270,7 +275,7 @@ def inverse_matrix(A):
         diag = AM[fd][fd]
         if diag:
             #fdScaler = Fraction(1,diag).limit_denominator(MAX_32BIT_INT)
-            fdScaler = 1.0/diag
+            fdScaler = float(1)/float(diag)
         else:
             assert False
         # FIRST: scale fd row with fd inverse. 
