@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, '/home/ajcollins/Documents/google-foobar/doomsday-fuel/solution')
 
 from fuel_solution import *
-from fuel_numpy import solution_fuel
+from solution.fuel_numpy import solution_fuel
 
 #Declare global test cases
 TEST_CASES = [
