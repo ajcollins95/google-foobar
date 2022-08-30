@@ -1,4 +1,4 @@
-from fuel_solution import *
+from doomsday_fuel import *
 
 # TEST CASE 1
 m = [[0, 2, 1, 0, 0], [0, 0, 0, 3, 4], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]

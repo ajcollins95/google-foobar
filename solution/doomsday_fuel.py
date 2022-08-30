@@ -7,17 +7,25 @@ per wikipedia definition). Once in this form, matrix Q and R are calculated.
 We solve for F = (1-Q) ** -1 and calc FR which is a matrix of probabilities that 
 various states will be reached.
 
+Reference:
+https://en.wikipedia.org/wiki/Absorbing_Markov_chain
+
+Note: I leaned heavily on existing solutions to solve this. I have cited 
+references where applicable. I hope to implement a matrix exponentiation version
+of this solution when time permits.
+
 """
 
 from fractions import Fraction, gcd
 import copy
 
-MAX_32BIT_INT = 2147483647
-
 def solution(fuel):
     """Solves the doomsday_fuel problem from google foobar.
 
-    Standardizes the input into a probability transition matrix. [MORE]
+    Standardizes the input into a probability transition matrix. From there, 
+    extracts the submatrices Q and R as per the wikipedia definition of an
+    absorbing markov chain. Then Q and R can be used to get the calculate F
+    and FR which will allow us to get the matrix of probabilities
 
     Args:
     2D Matrix of state changing probabilities
@@ -28,26 +36,16 @@ def solution(fuel):
     is reached. Effectively:
     probability_state_i = return[i]/return[-1]
     """
-    fuel_orig = copy.deepcopy(fuel)
-    #print("FUEL: ",fuel_orig)
+
+    #For the edge case when there is only one state
     if len(fuel) <= 1:
         return [1, 1]
 
     #puts fuel matrix into a probability transition matrix
     trans_fuel = fuel_to_transition(fuel)
-    #print("FUEL: ", fuel_orig)
-    #print("TRANS1: ",trans_fuel)
-    '''
-    #print('precheck', trans_fuel[0][0])
-    if trans_fuel[0][0] == 1:
-        ans = [0]*len(fuel)
-        ans[-1] = 1
-        return ans
-    '''
 
-    #re_fuel = reorder_fuel(prob_fuel)
+    #Get the submatrices according to the standard matrix form
     submatrices = extract_submatrices(trans_fuel)
-    #print("TRANS2: ",trans_fuel)
 
     Q = submatrices[0]
     R = submatrices[1]
@@ -88,38 +86,58 @@ def fuel_to_transition(fuel):
     return trans_fuel
 
 def extract_submatrices(trans_fuel):
-    #Full transparency I did lift this from URL
+    """Gets submatrices Q and R from the formatted transition matrix.
+
+    Iterates through the transition matrix to get the non absorbing rows. Then,
+    The individual elements oin those rows are placed into R or Q depending on 
+    if they correspond to an abosrbing or non-absorbing state.
+
+    Reference:
+    https://pages.cs.wisc.edu/~shrey/2020/08/10/google-foobar.html
+
+    Args:
+    Transition Matrix from fuel_to_transition()
+
+    Returns:
+    Array of [Q,R] according to canonical form of transition matrices for AMC's  
+    """
+    #gets a list of absorbing rows
     absorb_rows = [i for i in range(len(trans_fuel)) if 1 == trans_fuel[i][i]]
+
+    #loop variables
     R = []
     Q = []
     for r in range(len(trans_fuel)):
+        #only interested in non absorbing rows
         if not r in absorb_rows:
             r_row = []
             q_row = []
             for c in range(len(trans_fuel[0])):
+                #create R and Q based on the corresponding index probabilities
                 if c in absorb_rows:
                     r_row.append(trans_fuel[r][c])
                 else:
                     q_row.append(trans_fuel[r][c])
             R.append(r_row)
             Q.append(q_row)
-    #print(Q,R)
     return [Q, R]
 
 def calc_f(Q):
+    #Calculates F (F = (I - Q) ** -1) as per canonical form
     n = len(Q)
     return inverse_matrix(subtract_matrices(identity_matrix(n),Q))
     
-def format_solution(exp_fuel, og_fuel):
+def format_solution(FR, trans_fuel):
     """Turns an exponetiated input into the final formatted solution
 
     We only care about the top row of the exponentiated array; this represents
     the probabilities for state 0 in the original input. We then convert the
-    elements of that row to fractions
+    elements of that row to fractions, and return only the elements that 
+    correspond to absorbing states.
 
     Args:
-        exp_fuel: The exponentiated limit array as per get_solution_matrix()
-        og_fuel: The original input to solution()
+        FR: the matrix product of F and R
+        trans_fuel: the transition matrix created above
         
 
     Returns:
@@ -132,55 +150,28 @@ def format_solution(exp_fuel, og_fuel):
     max_32bit_int = 2147483647
 
     #top row describes probabilities when starting at state 0
-    exp_top_row = exp_fuel[0] 
+    exp_top_row = FR[0] 
 
     #convert elements to fractions using max32int as max denominator
     fract_fuel = [Fraction(elem).limit_denominator(max_32bit_int)
                   for elem in exp_top_row]
 
-    #print("FRACT_FUEL", fract_fuel)
-
     #get indices of terminal states in original input
     terminal_states = []
-    for i in range(len(og_fuel)):
-        #row_i = og_fuel[i]
-        #if sum(row_i) == 1:
-
-        if og_fuel[i][i] == 1:
+    for i in range(len(trans_fuel)):
+        if trans_fuel[i][i] == 1:
             terminal_states.append(i)
     
-    #print(og_fuel, terminal_states)
-
-    #find least common multiple for the fractions in the array
-    #EXPERIMENTAL
-
-    """
-    denoms = []
-    print(terminal_states)
-    for terminal_i in terminal_states:
-        print(terminal_i)
-        denoms.append(fract_fuel[terminal_i-1].denominator)
-    """
-
+    #get denominators of the elements and their least common multiple
     denoms = [elem.denominator for elem in fract_fuel]
+    lcm = get_lcm(denoms) 
 
-    """states = []
-    ff = fract_fuel[:]
-    for i in range(len(terminal_states)):
-        last = (ff.pop())
-        states.insert(0, last)
-    print("STATES: ", states)
-    """
-    lcm = get_lcm(denoms) #2.7 implementation
-    #lcm = math.lcm(*denoms) #python 3 implementation
-
-    #OLD
-    
+    #formats the data into the required syntax
     probs = [lcm]
     for i in range(len(terminal_states)):
         last = (lcm * fract_fuel.pop()).numerator
         probs.insert(0, last)
-    #if lcm == 163: probs[-1] = 100
+
     return probs
     
     
@@ -274,7 +265,6 @@ def inverse_matrix(A):
     for fd in range(n): # fd stands for focus diagonal
         diag = AM[fd][fd]
         if diag:
-            #fdScaler = Fraction(1,diag).limit_denominator(MAX_32BIT_INT)
             fdScaler = float(1)/float(diag)
         else:
             assert False
@@ -315,14 +305,3 @@ def matrix_multiply(A,B):
                 elem_sum += A[m_row][i] * B[i][m_col]
             m_prod[m_row][m_col] = elem_sum
     return m_prod
-
-unterminated = [
-    [0,0,0,0,0],
-    [1,2,0,4,0],
-    [0,0,0,0,0],
-    [0,0,0,0,0],
-    [0,0,0,0,0]
-]
-
-
-#print ("un",solution(unterminated))
