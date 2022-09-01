@@ -247,7 +247,7 @@ def scalar_matrix_mult(M, s):
 def inverse_matrix(A):
     """Gets the inverse of a matrix A
 
-    Uses matrix algebra to solve for the inverse of matrix A. 
+    Uses matrix algebra to solve for the inverse of matrix A.
 
     Reference:
     http://integratedmlai.com/matrixinverse/

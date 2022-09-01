@@ -42,26 +42,21 @@ def solution(fuel):
         return [1, 1]
 
     #puts fuel matrix into standard form with probabilities
-    prob_fuel = probabilize_fuel(fuel)
-    print(sum(prob_fuel[0]))
-
-    #re_fuel = reorder_fuel(prob_fuel)
-    assert False
+    std_fuel = standardize_fuel(fuel)
+    #print(sum(std_fuel[0]))
 
     #uses matrix exponentiation to calculate limit as elements go to infinity
-    exp_fuel = get_solution_matrix(prob_fuel)
-    print(exp_fuel)
-    assert False
+    exp_fuel = get_solution_matrix(std_fuel)
+    #print(exp_fuel)
     #print(exp_fuel)
 
     #formats into a single line answer
-    results = format_solution(exp_fuel, fuel)
+    results = format_solution(exp_fuel, std_fuel)
     return results
 
-'''
-OLD STD FUEL
 
-def probabilize_fuel(fuel):
+
+def standardize_fuel(fuel):
     """Turns an input 2D array into a more explicit absorb markov chain format.
 
     Each non zero element is converted from an integer to a probability, [0,1],
@@ -87,22 +82,7 @@ def probabilize_fuel(fuel):
             std_fuel.append(row_i)
 
     return std_fuel
-'''
-def probabilize_fuel(fuel):
-    max_32bit_int = 2147483647
-    std_fuel = []
-    for i in range(len(fuel)):
-        row_i = fuel[i]
-        row_i_sum = sum(row_i)
-        if sum(row_i):
-            new_row_i = [Fraction(elem,row_i_sum).limit_denominator(max_32bit_int) for elem in row_i]
-        else:
-            row_i[i] = 1
-            new_row_i = [Fraction(elem,1).limit_denominator(max_32bit_int) for elem in row_i]
-        std_fuel.append(new_row_i)
-    
 
-    return std_fuel
 
 #def reorder_fuel(prob_fuel):
 
@@ -132,19 +112,20 @@ def get_solution_matrix(std_fuel):
     while(not is_steady_state):
         #print(f'Power: {kth_power} \n{exp_fuel}')
         #if kth_power > 15: break
+        #print("exp_fuel: ", exp_fuel, '\n')
         is_steady_state = are_matrices_equal(
             matrix_multiply(exp_fuel, std_fuel),
             exp_fuel)
         exp_fuel = matrix_multiply(exp_fuel, std_fuel)
         '''
         is_top_left_zero = (is_equal(exp_fuel[0][0],0, epsilon) and
-                         is_equal(exp_fuel[1][0],0, epsilon))
+                        is_equal(exp_fuel[1][0],0, epsilon))
         '''
         kth_power += 1
     #print(f'kth_power = {kth_power}')
     return exp_fuel
             
-def format_solution(exp_fuel, og_fuel):
+def format_solution(exp_fuel, std_fuel):
     """Turns an exponetiated input into the final formatted solution
 
     We only care about the top row of the exponentiated array; this represents
@@ -173,25 +154,29 @@ def format_solution(exp_fuel, og_fuel):
                   for elem in exp_top_row]
 
     #get indices of terminal states in original input
-    terminal_states = set()
-    for i in range(len(og_fuel)):
-        row_i = og_fuel[i]
-        if sum(row_i) == 1:
-            terminal_states.add(i)
+    terminal_states = []
+    for i in range(len(std_fuel)):
+        if std_fuel[i][i] == 1:
+            terminal_states.append(i)
 
     #find least common multiple for the fractions in the array
-    denoms = [elem.denominator for elem in fract_fuel]
+    denoms = [int(elem.denominator) for elem in fract_fuel]
+    lcm = get_lcm(denoms) 
 
-    lcm = get_lcm(denoms) #2.7 implementation
-    #lcm = math.lcm(*denoms) #python 3 implementation
-
-
-    probs = [lcm]
-    for i in range(len(terminal_states)):
-        last = (lcm * fract_fuel.pop()).numerator
-        probs.insert(0, last)
+    #print("tStates",terminal_states)
+    print("denoms: ", denoms)
+    #print("FF",fract_fuel)
+    #print('lcm',lcm)
+    probs = []
+    for state in terminal_states:
+        frac = fract_fuel[state]
+        factor = lcm / frac.denominator
+        numerator = fract_fuel[state].numerator * factor
+        #print(frac,"Factor",factor,"numer",numaerator)
+        probs.append(numerator)
+    probs.append(lcm)
     return probs
-
+    
 ######
 #UTILS
 ######
@@ -200,13 +185,38 @@ def is_equal(x, y, epsilon = float(10 ** -25)):
     #compares float equality
     return abs(x-y) < epsilon
 
-def get_lcm(numbers):
+def get_lcm2(nums):
+    lcm = 1
+    num_last = nums[0]
+    for i in range(1, len(nums)):
+        num_i = nums[i]
+        if lcm % num_i != 0:
+            lcm *= num_i
+        last_num = num_i
+    return lcm
+
+def get_lcm(nums):
+    lcm = 1
+    num_last = nums[0]
+    for i in range(1, len(nums)):
+        num_i = nums[i]
+        if num_i == 1:
+            continue
+        elif num_i % lcm == 0:
+            lcm *= num_i / lcm
+        elif lcm % num_i != 0:
+            lcm *= num_i
+    return lcm
+
+def get_lcmOG(numbers):
     #gets lcm of the array of numbers
+    print('nums: ', numbers)
     lcm = 0
     num_last = numbers[0]
     for i in range(len(numbers)):
         num_i = numbers[i]
         lcm_i = abs(num_i * num_last) // gcd(num_i, num_last)
+        print('lcm_i: ',lcm_i,'lcm: ',lcm)
         if lcm_i > lcm:
             lcm = lcm_i
     return lcm
@@ -291,5 +301,5 @@ m = [
     ]
 
 
-print(solution(TEST_CASES[2]))
+#print(solution(TEST_CASES[2]))
 #print(solution([[0, 2, 1, 0, 0], [0, 0, 0, 3, 4], [0, 0, 0, 0, 0], [0, 0, 0, 0,0], [0, 0, 0, 0, 0]]))
