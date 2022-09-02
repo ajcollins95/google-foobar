@@ -110,19 +110,13 @@ def get_solution_matrix(std_fuel):
     epsilon = 10 ** -precision
 
     while(not is_steady_state):
-        #print(f'Power: {kth_power} \n{exp_fuel}')
-        #if kth_power > 15: break
-        #print("exp_fuel: ", exp_fuel, '\n')
+        #Exponetiates the matrix until it reaches steady state
         is_steady_state = are_matrices_equal(
             matrix_multiply(exp_fuel, std_fuel),
             exp_fuel)
         exp_fuel = matrix_multiply(exp_fuel, std_fuel)
-        '''
-        is_top_left_zero = (is_equal(exp_fuel[0][0],0, epsilon) and
-                        is_equal(exp_fuel[1][0],0, epsilon))
-        '''
+
         kth_power += 1
-    #print(f'kth_power = {kth_power}')
     return exp_fuel
             
 def format_solution(exp_fuel, std_fuel):

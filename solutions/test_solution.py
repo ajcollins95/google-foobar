@@ -1,4 +1,4 @@
-from fuel_solution import *
+from doomsday_fuel import *
 
 tests = [
     [[0, 2, 1, 0, 0], [0, 0, 0, 3, 4], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]],
@@ -28,9 +28,11 @@ answers = [
 
 for i in range(len(tests)):
     (test, ans)= (tests[i], answers[i])
-    print("Case: ", i)
     if not solution(test) == ans:
         print("User Ans: ", solution(test))
         print("Correct Ans: ", ans)
+    else:
+        print("Case: ", i, "Passed!")
+
     assert solution(test) == ans
 print("SOLUTION PASSED THE TESTS!")

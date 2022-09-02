@@ -54,7 +54,6 @@ def solution(fuel):
     F = calc_f(Q)
     FR = matrix_multiply(F,R)
     ans = format_solution(FR, trans_fuel)
-    #print(,ans)
 
     return ans
 
@@ -69,12 +68,12 @@ def fuel_to_transition(fuel):
     2D Matrix of state changing probabilities
 
     Returns:
-    2D array of float probabilities for each state to transition.   
+    2D array of float probabilities for each state to transition. 
     """
 
     trans_fuel = []
-    for i in range(len(fuel)):
-        row_i = fuel[i]
+
+    for (i, row_i) in enumerate(fuel):
         row_i_sum = sum(row_i)
         if sum(row_i):
             new_row_i = [float(elem)/float(row_i_sum) for elem in row_i]
@@ -107,12 +106,12 @@ def extract_submatrices(trans_fuel):
     #loop variables
     R = []
     Q = []
-    for r in range(len(trans_fuel)):
+    for (r, row_r) in enumerate(range(len(trans_fuel))):
         #only interested in non absorbing rows
         if not r in absorb_rows:
             r_row = []
             q_row = []
-            for c in range(len(trans_fuel[0])):
+            for (c, row_c) in enumerate(range(len(trans_fuel[0]))):
                 #create R and Q based on the corresponding index probabilities
                 if c in absorb_rows:
                     r_row.append(trans_fuel[r][c])
@@ -123,7 +122,10 @@ def extract_submatrices(trans_fuel):
     return [Q, R]
 
 def calc_f(Q):
-    #Calculates F (F = (I - Q) ** -1) as per canonical form
+    """
+    Calculates F (F = (I - Q) ** -1) as per canonical form.
+    """
+
     n = len(Q)
     return inverse_matrix(subtract_matrices(identity_matrix(n),Q))
     
@@ -158,13 +160,13 @@ def format_solution(FR, trans_fuel):
 
     #get indices of terminal states in original input
     terminal_states = []
-    for i in range(len(trans_fuel)):
+    for i in enumerate(range(len(trans_fuel))):
         if trans_fuel[i][i] == 1:
             terminal_states.append(i)
     
     #get denominators of the elements and their least common multiple
     denoms = [elem.denominator for elem in fract_fuel]
-    lcm = get_lcm(denoms) 
+    lcm = get_lcm(denoms)
 
     #formats the data into the required syntax
     probs = [lcm]
@@ -181,25 +183,29 @@ def format_solution(FR, trans_fuel):
 ######
 
 def get_lcm(numbers):
-    #gets lcm of the array of numbers
+    """
+    Gets lcm of the array of numbers
+    """
     lcm = 0
     num_last = numbers[0]
-    for i in range(len(numbers)):
-        num_i = numbers[i]
+    for (i, num_i) in enumerate(range(len(numbers))):
         lcm_i = abs(num_i * num_last) // gcd(num_i, num_last)
         if lcm_i > lcm:
             lcm = lcm_i
     return lcm
 
 def is_equal(x, y, epsilon = float(10 ** -25)):
+    """
+    Compares floats for equality with a default epsilon of 10 ** -25.
+    """
     #compares float equality
     return abs(x-y) < epsilon
 
 def are_matrices_equal(A,B):
-    #tests if two 2D matrices are equivalent
-
+    """
+    Uses float equality to check all elements of two matrices for equality
+    """
     #check matrix sizing
-    #print(A,B)
     if len(A) != len(B) or len(A[0]) != len(B[0]):
         return False
 
@@ -213,7 +219,9 @@ def are_matrices_equal(A,B):
     return matches == len(A) * len(A[0])
 
 def subtract_matrices(A, B):
-    #performs matrix subtraction
+    """
+    Performs matrix subtraction
+    """
 
     #confirm correct sizing
     assert len(A) == len(B) and len(A[0]) == len(B[0])
@@ -223,7 +231,7 @@ def subtract_matrices(A, B):
     m_diff = [[0 for i in range(cols)] for j in range(rows)]
     assert len(m_diff) == len(A) and len(m_diff[0]) == len(A[0])
 
-    #iterate through solution array, do the matrix product math
+    #iterate through solution array, do the matrix subtraction math
     for r in range(rows):
         for c in range(cols):          
             A_rc = A[r][c]
@@ -232,6 +240,9 @@ def subtract_matrices(A, B):
     return m_diff
 
 def identity_matrix(n):
+    """
+    Creates an identity matrix of size n
+    """
     #creates identity matrix
     I = [[0 for i in range(n)] for j in range(n)]
     for i in range(n):
@@ -239,6 +250,9 @@ def identity_matrix(n):
     return I
 
 def scalar_matrix_mult(M, s):
+    """
+    Multiplies a matrix by a scalar
+    """
     #multiplies matrix by a scalar
     (rows, cols) = (len(M), len(M[0]))
     s_prod = [[s*M[j][i] for i in range(cols)] for j in range(rows)]
@@ -273,13 +287,13 @@ def inverse_matrix(A):
     for fd in range(n): # fd stands for focus diagonal
         diag = AM[fd][fd]
         if diag:
-            fdScaler = float(1)/float(diag)
+            fd_scalar = float(1)/float(diag)
         else:
             assert False
         # FIRST: scale fd row with fd inverse. 
         for j in range(n): # Use j to indicate column looping.
-            AM[fd][j] *= fdScaler
-            IM[fd][j] *= fdScaler
+            AM[fd][j] *= fd_scalar
+            IM[fd][j] *= fd_scalar
         # SECOND: operate on all rows except fd row as follows:
         for i in indices[0:fd] + indices[fd+1:]: 
             # *** skip row with fd in it.
@@ -291,7 +305,9 @@ def inverse_matrix(A):
     return IM
 
 def matrix_multiply(A,B):
-    #performs matrix multiplication on two matrices
+    """
+    Performs matrix multiplication on two matrices
+    """
 
     #get inner dimensions, test that the matrix has correct sizing
     inner_dimens = (len(A[0]), len(B))
