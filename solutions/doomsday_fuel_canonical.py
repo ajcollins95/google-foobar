@@ -81,7 +81,6 @@ def fuel_to_transition(fuel):
         else:
             row_i[i] = 1
             trans_fuel.append(row_i)
-
     return trans_fuel
 
 def extract_submatrices(trans_fuel):
@@ -141,14 +140,13 @@ def format_solution(FR, trans_fuel):
         FR: the matrix product of F and R
         trans_fuel: the transition matrix created above
         
-
     Returns:
         Formatted 1D array of integers. The last index is the denominator. The 
         other elements are numerators that correspond to the probability that
         the states at those indices will be reached in the long term.
 
         [0, 3, 2, 9, 14]
-    """
+    """    
     max_32bit_int = 2147483647
 
     #top row describes probabilities when starting at state 0
@@ -160,13 +158,14 @@ def format_solution(FR, trans_fuel):
 
     #get indices of terminal states in original input
     terminal_states = []
-    for i in enumerate(range(len(trans_fuel))):
+    for (i, row_i) in enumerate(range(len(trans_fuel))):
         if trans_fuel[i][i] == 1:
             terminal_states.append(i)
     
     #get denominators of the elements and their least common multiple
     denoms = [elem.denominator for elem in fract_fuel]
     lcm = get_lcm(denoms)
+    print(lcm)
 
     #formats the data into the required syntax
     probs = [lcm]
@@ -182,16 +181,10 @@ def format_solution(FR, trans_fuel):
 #UTILS
 ######
 
-def get_lcm(numbers):
-    """
-    Gets lcm of the array of numbers
-    """
-    lcm = 0
-    num_last = numbers[0]
-    for (i, num_i) in enumerate(range(len(numbers))):
-        lcm_i = abs(num_i * num_last) // gcd(num_i, num_last)
-        if lcm_i > lcm:
-            lcm = lcm_i
+def get_lcm(nums):
+    lcm = 1
+    for num in nums:
+        lcm = lcm * num // gcd(lcm, num)
     return lcm
 
 def is_equal(x, y, epsilon = float(10 ** -25)):
