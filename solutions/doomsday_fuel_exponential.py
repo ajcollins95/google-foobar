@@ -19,7 +19,6 @@ limits is a matrix of probabilities that each state will be reached over time.
 
 
 from fractions import Fraction, gcd
-import math
 
 def solution(fuel):
     """Solves the doomsday_fuel problem from google foobar.
@@ -43,12 +42,9 @@ def solution(fuel):
 
     #puts fuel matrix into standard form with probabilities
     std_fuel = standardize_fuel(fuel)
-    #print(sum(std_fuel[0]))
 
     #uses matrix exponentiation to calculate limit as elements go to infinity
     exp_fuel = get_solution_matrix(std_fuel)
-    #print(exp_fuel)
-    #print(exp_fuel)
 
     #formats into a single line answer
     results = format_solution(exp_fuel, std_fuel)
@@ -84,10 +80,6 @@ def standardize_fuel(fuel):
     return std_fuel
 
 
-#def reorder_fuel(prob_fuel):
-
-
-
 def get_solution_matrix(std_fuel):
     """Turns a formatted fuel array into the exponentiated limit -> infinity.
 
@@ -106,8 +98,6 @@ def get_solution_matrix(std_fuel):
     is_steady_state = False #TODO develop better condition for steady-state limit
     kth_power = 2
     exp_fuel = std_fuel
-    precision = 15 #TODO develop formula for calculating precision
-    epsilon = 10 ** -precision
 
     while(not is_steady_state):
         #Exponetiates the matrix until it reaches steady state
@@ -157,16 +147,11 @@ def format_solution(exp_fuel, std_fuel):
     denoms = [int(elem.denominator) for elem in fract_fuel]
     lcm = get_lcm(denoms) 
 
-    #print("tStates",terminal_states)
-    print("denoms: ", denoms)
-    #print("FF",fract_fuel)
-    #print('lcm',lcm)
     probs = []
     for state in terminal_states:
         frac = fract_fuel[state]
         factor = lcm / frac.denominator
         numerator = fract_fuel[state].numerator * factor
-        #print(frac,"Factor",factor,"numer",numaerator)
         probs.append(numerator)
     probs.append(lcm)
     return probs
@@ -176,47 +161,24 @@ def format_solution(exp_fuel, std_fuel):
 ######
 
 def is_equal(x, y, epsilon = float(10 ** -25)):
-    #compares float equality
+    """
+    Compares float values for equality using a default epsilon value of 10 ** -25
+    """
     return abs(x-y) < epsilon
 
-def get_lcm2(nums):
-    lcm = 1
-    num_last = nums[0]
-    for i in range(1, len(nums)):
-        num_i = nums[i]
-        if lcm % num_i != 0:
-            lcm *= num_i
-        last_num = num_i
-    return lcm
-
 def get_lcm(nums):
+    """
+    Gets the least common multiple of a list of numbers
+    """
     lcm = 1
-    num_last = nums[0]
-    for i in range(1, len(nums)):
-        num_i = nums[i]
-        if num_i == 1:
-            continue
-        elif num_i % lcm == 0:
-            lcm *= num_i / lcm
-        elif lcm % num_i != 0:
-            lcm *= num_i
-    return lcm
-
-def get_lcmOG(numbers):
-    #gets lcm of the array of numbers
-    print('nums: ', numbers)
-    lcm = 0
-    num_last = numbers[0]
-    for i in range(len(numbers)):
-        num_i = numbers[i]
-        lcm_i = abs(num_i * num_last) // gcd(num_i, num_last)
-        print('lcm_i: ',lcm_i,'lcm: ',lcm)
-        if lcm_i > lcm:
-            lcm = lcm_i
+    for num in nums:
+        lcm = lcm * num // gcd(lcm, num)
     return lcm
 
 def are_matrices_equal(A,B):
-    #tests if two 2D matrices are equivalent
+    """
+    Tests if two 2D matrices are equivalent
+    """
 
     #check matrix sizing
     if len(A) != len(B) or len(A[0]) != len(B[0]):
@@ -232,7 +194,9 @@ def are_matrices_equal(A,B):
     return matches == len(A) * len(A[0])
 
 def matrix_multiply(A,B):
-    #performs matrix multiplication on two matrices
+    """
+    Performs matrix multiplication on two matrices
+    """
 
     #get inner dimensions, test that the matrix has correct sizing
     inner_dimens = (len(A[0]), len(B))
@@ -255,45 +219,3 @@ def matrix_multiply(A,B):
             m_prod[m_row][m_col] = elem_sum
     return m_prod
 
-gamble = [
-    [0,0,0,0,0,0],
-    [3,0,2,0,0,0],
-    [0,3,0,2,0,0],
-    [0,0,3,0,2,0],
-    [0,0,0,3,0,2],
-    [0,0,0,0,0,0]
-]
-TEST_CASES = [
-    [
-        [0, 1, 0, 0, 0, 1],
-        [4, 0, 0, 3, 2, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0]
-    ],
-    [
-        [0, 2, 1, 0, 0],
-        [0, 0, 0, 3, 4],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-    ],
-    [
-        [1, 0, 0, 0],
-        [1, 0, 1, 0],
-        [0, 1, 0, 1],
-        [0, 0, 0, 0]
-    ]
-]
-m = [
-        [0,2,3,0,1],
-        [0,0,0,0,0],
-        [1,0,0,1,0],
-        [0,0,0,0,0],
-        [0,0,0,0,0]
-    ]
-
-
-#print(solution(TEST_CASES[2]))
-#print(solution([[0, 2, 1, 0, 0], [0, 0, 0, 3, 4], [0, 0, 0, 0, 0], [0, 0, 0, 0,0], [0, 0, 0, 0, 0]]))

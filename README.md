@@ -1,5 +1,15 @@
-Doomsday Fuel
+Google Foo.Bar: Doomsday Fuel
 =============
+
+The first challenge of level 3 for me was the following doomsday fuel problem. Originally I had no idea how to solve this so I started researching how to get probabilities for a matrix that has multiple states. Eventually I realized that this was a Markov Chain problem, and specfically, an absorbing one. Fortunately, there are some pretty standard ways to solve this problem mathematically; I found at least two solutions and am sure there must be others. 
+
+1. Canonical Form with Submatrices
+2. Matrix Exponetiation
+
+I ended up implementing both solutions out of curiosity. Ultimately, the most efficient solution for this problem is the Canonical Form method. Matrix Exponentiation is itself computationally complex, but this problem requires exponentiating a solution matrix until it reaches steady state! This can lead to some pretty lengthy iteration. This solution required implementing several lower level functions (matrix inverse, matrix equality, matrix multiplication, etc.) for matrix math. Google's Python 2.7 sandbox didn't allow for packages outside of the Python standard library. I definitely received lots of help from the internet and tried to cite solutions where I used another implementation heavily.
+
+Prompt
+=========
 
 Making fuel for the LAMBCHOP's reactor core is a tricky process because of the exotic matter involved. It starts as raw ore, then during processing, begins randomly changing between forms, eventually reaching a stable form. There may be multiple stable forms that a sample could ultimately reach, not all of which are useful as fuel. 
 
