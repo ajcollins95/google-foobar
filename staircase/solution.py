@@ -1,5 +1,25 @@
 def solution(n):
-    pass
+    """
+    This is the provided method for the challenge.
+
+    Write a function called solution(n) that takes a positive integer n 
+    and returns the number of different staircases that can be built from 
+    exactly n bricks. n will always be at least 3 (so you can have a 
+    staircase at all), but no more than 200, because Commander Lambda's 
+    not made of money.
+
+    Args:
+    n - number of bricks (int)
+
+    Returns:
+    number of possible staircase combos that can be made from n bricks (int)
+    """
+    max_stairs = get_max_stairs(n)
+    valid_stair_combos = 0
+    for i in range(2, max_stairs + 1):
+        combos = combinations_at_staircase_length(n, i)
+        valid_stair_combos += len(combos)
+    return valid_stair_combos
 
 def get_max_stairs(b):
     """This method calculates the longest staircase that b bricks will be able to build
