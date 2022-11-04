@@ -44,8 +44,35 @@ def get_minimum_tail_sum(n):
     """
     return n *(n + 1) / 2
 
-def get_tail():
-    pass
+def get_tail(b, s, head):
+    """
+    Given a value for the height of the first stair, create the remaining stairs
+    based on the number of bricks and the length of the entire staircase. There should
+    only be one possibility based on the inputs!
+
+    Args
+    b - total number of bricks
+    s - length of the staircase (including the head!)
+    head - height of the first stair in the staircase
+
+    Returns
+    A list representing the remaining stair(s) based on the input
+    """
+    tail_sum = b - head
+    #assert(get_minimum_tail_sum(s-1) == tail_sum)
+    if s < 2:
+        assert False
+    elif s == 2:
+        return [tail_sum]
+    else: # s > 2
+        tail = []
+        increment = 1
+        while tail_sum > 0:
+            tail.append(increment)
+            tail_sum -= increment
+            increment += 1
+        tail.reverse()
+        return tail
 
 def is_valid_staircase(s, b):
     """
@@ -60,10 +87,11 @@ def is_valid_staircase(s, b):
     Boolean value representing whether or not the staircase 's' is valid based
     on the definition in the challenge prompt.
     """
-    if (not type(s) == 'list' or
+    if (not isinstance(s, list) or
         sum(s) != b):
         return False
     elif (not all(isinstance(item, int) for item in s)):
+        print('not all integers')
         return False
     else:
         #no explicit testing for correct length, testing sum and descending order should be
