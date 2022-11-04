@@ -53,6 +53,8 @@ def run():
     is_correct_version()
     test_get_minimum_tail_sum()
     test_get_max_stairs()
+    test_is_valid_staircase()
+
     print("All test methods in run() have passed!")
 
 def is_correct_version():
@@ -108,6 +110,16 @@ def test_get_max_stairs():
         (200, 19),
     ]
     Test(get_max_stairs, use_cases)
+
+def test_is_valid_staircase():
+    use_cases = [
+        ([3,2,1], True),
+        ([2,1], True),
+        ([3,1], True),
+        #([7,2,1])
+    ]
+    Test(is_valid_staircase, use_cases)
+
 
 
 run()
