@@ -24,7 +24,38 @@ def get_max_stairs(b):
             b < get_minimum_tail_sum(triangle_base + 1))
     return triangle_base
 
-def combinations_at_staircase_length():
+def combinations_at_staircase_length(b, s):
+    """
+    This method gets the possible staircase combinations based on the
+    provided parameters.
+
+    Args:
+    b - total number of bricks provided (integer)
+    s - length of the staircases to be returned
+
+    Returns:
+    Will return all possible combinations of s stairs, provided there
+    are b bricks
+    """
+    if s < 2:
+        return [] #should never reach this...
+    minimum_tail_sum = get_minimum_tail_sum(s-1)
+    head = b - minimum_tail_sum
+    tail = get_triangular_tail(b, s, head)
+    combinations = []
+    combo = [head] + tail
+
+    if s == 2:
+        while(is_valid_staircase(combo, b)):
+            combinations += [combo]
+            head -= 1
+            tail = get_triangular_tail(b, s, head)
+            combo = [head] + tail
+        return combinations
+    else:
+        combinations += [combo] if 
+        while
+        
     pass
         
 def get_minimum_tail_sum(n):
@@ -61,7 +92,7 @@ def get_triangular_tail(b, s, head):
     A list representing the remaining stair(s) based on the input
     """
     tail_sum = b - head
-    assert(get_minimum_tail_sum(s-1) == tail_sum)
+    #assert(get_minimum_tail_sum(s-1) == tail_sum)
     if s < 2:
         assert False
     elif s == 2:

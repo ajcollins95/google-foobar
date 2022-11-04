@@ -72,6 +72,7 @@ def run():
     test_get_max_stairs()
     test_is_valid_staircase()
     test_get_triangular_tail()
+    test_combinations_at_staircase_length()
 
     print("All test methods in run() have passed!")
 
@@ -152,11 +153,16 @@ def test_get_triangular_tail():
         ([10, 4, 4], [3, 2, 1]),
         ([15, 4, 9], [3, 2, 1]),
         ([15, 5, 5], [4, 3, 2, 1]),
-        
     ]
     Test(get_triangular_tail, use_cases, input_fields=3)
 
-
+def test_combinations_at_staircase_length():
+    use_cases = [
+        ([5, 2], [[4, 1], [3, 2]]),
+        ([10, 2], [[9, 1], [8, 2], [7, 3], [6, 4]]),
+        ([14, 2], [[13, 1], [12, 2], [11, 3], [10, 4], [9, 5], [8, 6]])
+    ]
+    Test(combinations_at_staircase_length, use_cases, input_fields=2)
 
 
 run()
