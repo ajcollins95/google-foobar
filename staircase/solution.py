@@ -52,11 +52,22 @@ def combinations_at_staircase_length(b, s):
             tail = get_triangular_tail(b, s, head)
             combo = [head] + tail
         return combinations
-    else:
-        combinations += [combo] if 
-        while
-        
-    pass
+    else: # s > 2
+        if is_valid_staircase(combo, b):
+            combinations += [combo]
+        while_cycles = 1
+        while is_valid_staircase(combo, b):
+            #This is when I stop understanding my elevated consciousness...
+            #wait i think I get it now
+
+            head -= 1
+            tails = combinations_at_staircase_length(b - head, s - while_cycles)
+            for i, tail_i in enumerate(tails):
+                combo = [head] + tail_i
+                if is_valid_staircase(combo, b):
+                    combinations += [combo]
+        return combinations
+
         
 def get_minimum_tail_sum(n):
     """Gets the smallest sum for a staircase with n stairs
