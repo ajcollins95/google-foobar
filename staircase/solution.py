@@ -44,11 +44,13 @@ def get_minimum_tail_sum(n):
     """
     return n *(n + 1) / 2
 
-def get_tail(b, s, head):
+def get_triangular_tail(b, s, head):
     """
     Given a value for the height of the first stair, create the remaining stairs
     based on the number of bricks and the length of the entire staircase. There should
-    only be one possibility based on the inputs!
+    only be one possibility based on the inputs! Only valid for when the tail is
+    a 'triangular tail' meaning that its a valid staircase and its sum is a triangle number 
+    where the base is its length.
 
     Args
     b - total number of bricks
@@ -59,7 +61,7 @@ def get_tail(b, s, head):
     A list representing the remaining stair(s) based on the input
     """
     tail_sum = b - head
-    #assert(get_minimum_tail_sum(s-1) == tail_sum)
+    assert(get_minimum_tail_sum(s-1) == tail_sum)
     if s < 2:
         assert False
     elif s == 2:

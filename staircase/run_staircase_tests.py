@@ -71,7 +71,7 @@ def run():
     test_get_minimum_tail_sum()
     test_get_max_stairs()
     test_is_valid_staircase()
-    test_get_tail()
+    test_get_triangular_tail()
 
     print("All test methods in run() have passed!")
 
@@ -145,14 +145,16 @@ def test_is_valid_staircase():
     ]
     Test(is_valid_staircase, use_cases, input_fields=2)
 
-def test_get_tail():
+def test_get_triangular_tail():
     use_cases = [
         ([6, 2, 5], [1]),
         ([6, 3, 3], [2, 1]),
         ([10, 4, 4], [3, 2, 1]),
-        ([14, 4, 6], [6, 4, 3, 1]),
+        ([15, 4, 9], [3, 2, 1]),
+        ([15, 5, 5], [4, 3, 2, 1]),
+        
     ]
-    Test(get_tail, use_cases, input_fields=3)
+    Test(get_triangular_tail, use_cases, input_fields=3)
 
 
 
