@@ -32,15 +32,17 @@ class StaircaseSolver:
         return cache
 
     def show_2d_list(self, data):
-        for d in data:
-            print d
+        for i in range(len(data)):
+            print (i, data[i])
 
     def get_staircases(self, n):
         maximum_stair_len = int(math.floor(((8 * n + 1) ** 0.5 - 1) / 2)) #Comes from OEIS A008289
-        print maximum_stair_len
+        print (maximum_stair_len)
         for k in range(1, int(maximum_stair_len) + 1):
             self.partition_function_q(n, k)
-        print self.cache[-1][1:maximum_stair_len]
+        self.show_2d_list(self.cache)
+
+        #print self.cache[-1][1:maximum_stair_len]
         return sum(self.cache[-1][1:maximum_stair_len])
         self.show_2d_list(self.cache)
         pass
@@ -76,4 +78,4 @@ def solution(n):
     return StaircaseSolver(n).get_solution()
 
 
-print solution(200)
+print (solution(16))

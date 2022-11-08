@@ -19,19 +19,3 @@ def Q(n, k):
     else:
         return Q(n - k, k) + Q(n - k, k-1)
 """
-
-def Q(n, k):
-    if n == k == 1:
-        return 1
-    elif n > 0 and k == 0:
-        return 0
-    elif n < k or k < 1:
-        return 0
-    else:
-        print("n",n,"k",k)
-        print('len of CACHE', len(CACHE))
-        if CACHE[n][k] == "-":
-            CACHE[n][k] = Q(n - k, k) + Q(n - k, k-1)
-        return CACHE[n][k]
-
-main(13)
