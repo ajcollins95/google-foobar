@@ -31,20 +31,32 @@ class StaircaseSolver:
         cache = [[None for c in range(n)] for r in range(n)]
         return cache
 
-    def show_2d_list(self, data):
-        for i in range(len(data)):
-            print (i, data[i])
+    def show_2d_list(self, data, maximum_stair_len):
+        for i in range(3, len(data)):
+            #print (i, sum(data[i][1:maximum_stair_len]))
+            #print (i, data[i])
+            print (i, self.get_row_sum(data[i]))
+
+    def get_row_sum(self, row):
+        running_sum = 0
+        for i in range(2,len(row)):
+            if row[i] != None:
+                running_sum += row[i]
+            else:
+                return running_sum
+
 
     def get_staircases(self, n):
         maximum_stair_len = int(math.floor(((8 * n + 1) ** 0.5 - 1) / 2)) #Comes from OEIS A008289
-        print (maximum_stair_len)
-        for k in range(1, int(maximum_stair_len) + 1):
-            self.partition_function_q(n, k)
-        self.show_2d_list(self.cache)
+        #print (maximum_stair_len)
+        for n in range(1, n + 1):
+            for k in range(1, int(maximum_stair_len) + 1):
+                self.partition_function_q(n, k)
+        #self.show_2d_list(self.cache, maximum_stair_len)
 
-        #print self.cache[-1][1:maximum_stair_len]
-        return sum(self.cache[-1][1:maximum_stair_len])
-        self.show_2d_list(self.cache)
+        #print (self.cache[-1][1:maximum_stair_len])
+        return self.get_row_sum(self.cache[-1])
+        #self.show_2d_list(self.cache)
         pass
 
     def partition_function_q(self, n, size):
@@ -78,4 +90,4 @@ def solution(n):
     return StaircaseSolver(n).get_solution()
 
 
-print (solution(16))
+print solution(200)
