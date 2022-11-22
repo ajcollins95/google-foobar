@@ -7,8 +7,12 @@ def solution(M, F):
     }
 
     while(True):
-        if solution_data["M"] == 1 and solution_data["F"] == 1:
-            return solution_data["generations_count"]
+        if solution_data["M"] == 0 or solution_data["F"] == 0:
+            return "impossible"
+        elif solution_data["M"] == solution_data["F"] and solution_data["M"] > 1:
+            return "impossible"
+        elif solution_data["M"] == 1 and solution_data["F"] == 1:
+            return str(solution_data["generations_count"])
         solution_data = update_solution_data(solution_data)
         
 def update_solution_data(data):
@@ -26,7 +30,7 @@ def update_solution_data(data):
     min_count = data[min_bomb_type]
 
     #control block to address when max_bomb_type_count >> min_bomb_type_count
-    if max_count > min_count * 2:
+    if max_count > min_count * 2 and min_count > 1:
         max_over_min = (data[max_bomb_type] / data[min_bomb_type])
         data[max_bomb_type] = data[max_bomb_type] - data[min_bomb_type] * max_over_min
         data["generations_count"] += max_over_min
@@ -38,8 +42,6 @@ def update_solution_data(data):
         pass
     else: 
         #only possible if something is in end state I think
-        print "You done messed up A-A-Ron!"
-    print data
+        print ("ERROR AARON", data)
     return data
 
-solution("2", "9")
