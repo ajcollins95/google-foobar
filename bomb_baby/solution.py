@@ -39,6 +39,17 @@ def solution(M, F):
 def update_solution_data(data):
     """
     Updates the solution data object based on the newest iteration of the while loop
+
+    Updates the state of the data object. If the bomb type that has a greater number of bombs
+    is much larger than the other bomb type, rapidly calculate how many generations it takes to even
+    out the bomb types. If the bomb types are close enough in number, iterate backward 1 generation,
+    based on whichever bomb type is greater.
+
+    Args 
+    data - a dictionary with a mach bomb count, facula bomb count, and generation count
+
+    Returns
+    Updated data dictionary
     """
     #Creates variables for which bomb type is greater than the other
     bomb_types = ["M", "F"] 
@@ -53,14 +64,11 @@ def update_solution_data(data):
     #control block to address when max_bomb_type_count >> min_bomb_type_count
     if max_count > min_count * 2 and min_count > 1:
         max_over_min = (data[max_bomb_type] / data[min_bomb_type])
-        data[max_bomb_type] = data[max_bomb_type] - data[min_bomb_type] * max_over_min
+        data[max_bomb_type] -= data[min_bomb_type] * max_over_min
         data["generations_count"] += max_over_min
     elif max_count > min_count:
         #data[max_bomb_type] = data[max_bomb_type] - data[min_bomb_type]
         data[max_bomb_type] -= data[min_bomb_type]
         data["generations_count"] += 1
-    else: 
-        #only possible if something is in end state I think
-        print ("ERROR AARON", data)
     return data
 
