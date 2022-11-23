@@ -1,17 +1,38 @@
 def solution(M, F):
+    """
+    Determines if a final Mach/Facula bomb configuration is possible and how many generations it takes to get there.
+
+    Write a function solution(M, F) where M and F are the number of Mach and Facula bombs needed. Return the 
+    fewest number of generations (as a string) that need to pass before you'll have the exact number of bombs 
+    necessary to destroy the LAMBCHOP, or the string "impossible" if this can't be done! M and F will be string
+    representations of positive integers no larger than 10^50. This solution attempts to backtrack from the final 
+    state, and if it ends up at (1, 1) then assumes that the final configuration is possible. Each backtrack is
+    counted in the solution data dictionary. There are a few cases where the backtrack proves to be impossible,
+    and this loop accounts for them.
+
+    Args
+    M - Number of Mach bombs in final state (string)
+    F - Number of Facula bombs in final state (string)
+
+    Returns
+    Either the string 'impossible' if the final state cannot be reached, or the string number of generations it takes
+    to reach the final state.
+    """
     solution_data = {
-        "M": int(M),
-        "F": int(F),
-        "generations_count": 0,
-        "is_end_state": False,
+        "M": int(M), #Number of Mach bombs
+        "F": int(F), #Number of Facula bombs
+        "generations_count": 0, 
     }
 
     while(True):
         if solution_data["M"] == 0 or solution_data["F"] == 0:
+            #If the update ends up with none of a bomb type, the final configuration is impossible
             return "impossible"
         elif solution_data["M"] == solution_data["F"] and solution_data["M"] > 1:
+            #If the update ever has the bomb types equal each other (after first gen), final configuration is impossible
             return "impossible"
         elif solution_data["M"] == 1 and solution_data["F"] == 1:
+            #If the update gets us back to original start state, return number of generations!
             return str(solution_data["generations_count"])
         solution_data = update_solution_data(solution_data)
         
@@ -34,12 +55,10 @@ def update_solution_data(data):
         max_over_min = (data[max_bomb_type] / data[min_bomb_type])
         data[max_bomb_type] = data[max_bomb_type] - data[min_bomb_type] * max_over_min
         data["generations_count"] += max_over_min
-        pass
     elif max_count > min_count:
         #data[max_bomb_type] = data[max_bomb_type] - data[min_bomb_type]
         data[max_bomb_type] -= data[min_bomb_type]
         data["generations_count"] += 1
-        pass
     else: 
         #only possible if something is in end state I think
         print ("ERROR AARON", data)

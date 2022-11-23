@@ -21,4 +21,6 @@ def test():
         if not actual == answers[i]:
             print ("M = ", M, "F = ", F, "expected ", answers[i], ", got ", solution(M,F))
 
+    print "Tests passed!"
+
 test()
